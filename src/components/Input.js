@@ -20,7 +20,7 @@ const Input = ({
   placeholder, //default로 떠있는 텍스트
   value, // 할일 텍스트
   onChangeText, //텍스트 변화를 처리하는 함수
-  onSubmitEditing, //입력 완료를 터리하는 함수
+  onSubmitEditing, //입력 완료를 리턴하는 함수
   onBlur, //입력 도중에 input영역이 focus잃으면 수정 취소
 }) => {
   //너비를 창의 너비와 맞춘다

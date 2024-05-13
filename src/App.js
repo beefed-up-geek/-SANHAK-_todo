@@ -34,9 +34,9 @@ export default function App() {
   const [newTask, setNewTask] = useState('');
   //tasks 컴포넌트 만들기
   const [tasks, setTasks] = useState({
-    '1':{id:'1', text: '산학 리액트 과제', completed: false},
-    '2':{id:'2', text: 'kick-off 미팅', completed: false},
-    '3':{id:'3', text: '시스템프로그램 퀴즈', completed: false}
+    '1':{id:'1', text: '산학 리액트 과제',date:'4/13', completed: false},
+    '2':{id:'2', text: 'kick-off 미팅',date:'4/13', completed: false},
+    '3':{id:'3', text: '시스템프로그램 퀴즈',date:'4/13', completed: false}
   });
 
 
@@ -49,7 +49,7 @@ export default function App() {
     const ID = Date.now().toString();
     //새로운 task리스트 생성
     const newTaskObject = {
-      [ID]: { id: ID, text: newTask, completed: false },
+      [ID]: { id: ID, text: newTask, date: '4/13',completed: false },
     };
     setNewTask(''); 
     setTasks({ ...tasks, ...newTaskObject }); //기존의 task리시트에 새로운 리스트를 뒤에 추가
