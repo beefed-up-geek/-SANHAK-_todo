@@ -4,6 +4,7 @@ import {theme} from './theme';
 import { StatusBar, Dimensions } from 'react-native';
 import Input from './components/Input';
 import Task from './components/Task';
+import DatePicker from 'react-native-date-picker'; // DatePicker 컴포넌트 임포트
 
 //const Container = styled.SafeAreaViewView
 const Container = styled.View`
@@ -34,11 +35,13 @@ export default function App() {
   const [newTask, setNewTask] = useState('');
   //tasks 컴포넌트 만들기
   const [tasks, setTasks] = useState({
-    '1':{id:'1', text: '산학 리액트 과제',date:'4/13', completed: false},
-    '2':{id:'2', text: 'kick-off 미팅',date:'4/13', completed: false},
-    '3':{id:'3', text: '시스템프로그램 퀴즈',date:'4/13', completed: false}
-  });
-
+    '1':{id:'1', text: '산학 리액트 과제',date: new Date(2024, 0, 1), completed: false},
+    '2':{id:'2', text: 'kick-off 미팅',date: new Date(2024, 0, 1), completed: false},
+    '3':{id:'3', text: '시스템프로그램 퀴즈',date: new Date(2024, 0, 1), completed: false}
+  }); 
+  
+  const [date, setDate] = useState(new Date())
+  const [open, setOpen] = useState(false)
 
   //텍스트 변화를 처리하는 함수
   const _handleTextChange = text => {
@@ -46,14 +49,8 @@ export default function App() {
   };
   //할일 추가하는 함수 
   const _addTask = () => {
-    const ID = Date.now().toString();
-    //새로운 task리스트 생성
-    const newTaskObject = {
-      [ID]: { id: ID, text: newTask, date: '4/13',completed: false },
-    };
-    setNewTask(''); 
-    setTasks({ ...tasks, ...newTaskObject }); //기존의 task리시트에 새로운 리스트를 뒤에 추가
-  };
+    setOpen(true)
+};
   //삭제 기능 구현
   const _deleteTask = id => {
     const currentTasks = Object.assign({}, tasks);
@@ -74,7 +71,7 @@ export default function App() {
   };
   //
   const _onBlur = () => {
-    setNewTask('');
+    //setNewTask('');
   };
     return (
       <ThemeProvider theme={theme}>
@@ -84,7 +81,7 @@ export default function App() {
             backgroundColor={theme.background}
             />
             <Title>SANHAK TODO</Title>
-            <Input // ./components/input.js에서 매개변수수 확인!!
+            <Input // ./components/input.js에서 매개변수 확인!!
               placeholder="할 일 추가 +"
               value={newTask} 
               onChangeText={_handleTextChange}
@@ -104,6 +101,35 @@ export default function App() {
               />
             ))} 
             </List>
+            <DatePicker
+        modal
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false);
+          setDate(date);
+          const currentText = newTask; // 현재 입력된 텍스트를 임시 변수에 저장
+          if (currentText.trim() === '') {
+            alert('할 일을 입력해 주세요.'); // 입력이 비어있는 경우 경고
+            return;
+          }
+          const ID = Date.now().toString(); // 새로운 task의 고유 ID 생성
+          const newTaskObject = {
+            [ID]: {
+              id: ID,
+              text: currentText,
+              date: date,
+              completed: false
+            },
+          };
+          setTasks({ ...tasks, ...newTaskObject }); // 새로운 task를 기존 task에 추가
+          setNewTask(''); // 입력 필드 초기화
+        }}
+        
+        onCancel={() => {
+          setOpen(false)
+        }}
+      />
         </Container>
       </ThemeProvider>
     );

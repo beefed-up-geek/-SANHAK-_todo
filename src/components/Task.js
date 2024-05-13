@@ -30,7 +30,7 @@ const CheckBoxContainer = styled.View`
 `;
 
 const TextContainer = styled.Text`
-  flex: 2;
+  flex: 4;
   font-size: 18px;
   color: ${({ theme, completed }) => (completed ? theme.done : theme.text)};
   text-decoration-line: ${({ completed }) => (completed ? 'line-through' : 'none')};
@@ -38,11 +38,10 @@ const TextContainer = styled.Text`
 `;
 
 const DateContainer = styled.Text`
-  flex: 1;
+  flex: 2;
   font-size: 18px; 
   color: ${({ theme, completed }) => (completed ? theme.done : theme.text)};
   text-decoration-line: ${({ completed }) => (completed ? 'line-through' : 'none')};
-  margin-left: 10px;
 `;
 
 // 두 번째 서브 컨테이너
@@ -63,9 +62,11 @@ const Contents = styled.Text`
 
 //item은 할일, deletetask는 삭제함수, toggletask는 완료 함수, updateTask는 수정함수 
 const Task = ({ item, deleteTask, toggleTask, updateTask}) => {
+
   const [isEditing, setIsEditing] = useState(false); //현재 수정중인지 아닌지 상태
   const [text, setText] = useState(item.text); //텍스트 설정
   const [date, setDate] = useState(item.date); //@날짜 설정
+  const [open, setOpen] = useState(false) //날짜 설정 창을 키고 끄는 변수
   //연필 버튼이 클릭되면 isEditing을 true로 만듦
   const _handleUpdateButtonPress = () => {
     setIsEditing(true);
@@ -87,11 +88,17 @@ const Task = ({ item, deleteTask, toggleTask, updateTask}) => {
   };
   // 날짜 변경 버튼을 눌렀을 때의 처리 함수
   const _handleDateChangeButtonPress = () => {
-    // item 오브젝트를 복사하고, date 속성을 "5/13"으로 업데이트
-    const editedTask = {...item, date: '5/13'};
-    // 수정된 task 객체로 업데이트 함수를 호출
-    updateTask(editedTask);
+    //그냥 datePicker창이 뜨도록 변경함
   };
+    //날짜를 텍스트로 바꿔주는 함수
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // getMonth()는 0부터 시작하므로 +1 필요
+      const day = date.getDate();
+    
+      // 월과 일이 10보다 작을 경우 앞에 0을 붙여줍니다.
+      return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
+    };
 
   //만약 isEditing중이라면 Input텍스트 상자로 치환함
   return isEditing ? (
@@ -112,8 +119,8 @@ const Task = ({ item, deleteTask, toggleTask, updateTask}) => {
             completed={item.completed}
           />
         </CheckBoxContainer>
-        <DateContainer completed={item.completed}>{item.date}</DateContainer>
-        <TextContainer completed={item.completed}>{item.text}</TextContainer>
+        <DateContainer completed={item.completed}>{formatDate(item.date)}</DateContainer>
+        <TextContainer completed={item.completed} style={{ color: '#778bdd' }}>{item.text}</TextContainer>
       </TopContainer>
       <BottomContainer>
         {item.completed || (
@@ -125,7 +132,7 @@ const Task = ({ item, deleteTask, toggleTask, updateTask}) => {
         {item.completed || (
           <IconButton
             type={images.calander}
-            onPressOut={_handleDateChangeButtonPress}
+            onPressOut={() => setOpen(true)}
           />
         )}
         <IconButton
@@ -135,7 +142,22 @@ const Task = ({ item, deleteTask, toggleTask, updateTask}) => {
           completed={item.completed}
         />
       </BottomContainer>
+      <>
+      <DatePicker
+        modal
+        mode="date"
+        open={open}
+        date={date}
+        onConfirm={(date) => {
+          setOpen(false)
+          setDate(date)
+          const editedTask = {...item, date: date};
+          updateTask(editedTask);
+        }}
+      />
+    </>
     </Container>
+    
   );
 };
 
