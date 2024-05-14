@@ -154,6 +154,10 @@ const Task = ({ item, deleteTask, toggleTask, updateTask}) => {
           const editedTask = {...item, date: date};
           updateTask(editedTask);
         }}
+        onCancel={() => {
+          setOpen(false)
+        }
+      }
       />
     </>
     </Container>
